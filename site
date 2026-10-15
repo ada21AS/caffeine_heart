@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Caffeine Heart: a mini website that tracks your caffeine, sip by sip, with a heart that reacts. Based on the American Heart Association scientific statement on caffeine and cardiovascular disease.">
+<meta name="theme-color" content="#FFF3DF">
+<meta property="og:title" content="Caffeine Heart">
+<meta property="og:description" content="Track your caffeine, sip by sip, and watch a little heart react.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 42 C10 33 4 24 7 15 C9 8 19 7 24 14 C29 7 39 8 41 15 C44 24 38 33 24 42Z' fill='%23E43D35'/%3E%3Ccircle cx='19' cy='22' r='2.6' fill='%231b1010'/%3E%3Ccircle cx='29' cy='22' r='2.6' fill='%231b1010'/%3E%3C/svg%3E">
+<title>Caffeine Heart</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Concept: the whole page is one small world. A landscape hero changes mood with caffeine level,
+   the page scrolls down into a street of shops, a health office, a notebook and a signpost library.
+   Controls follow the reference: soft white floating dock with a dark rounded-square primary button. */
+@property --sky1{syntax:'<color>';inherits:true;initial-value:#8FD0EC}
+@property --sky2{syntax:'<color>';inherits:true;initial-value:#E3F6FB}
+@property --sun{syntax:'<color>';inherits:true;initial-value:#FFE08A}
+@property --mtn1{syntax:'<color>';inherits:true;initial-value:#8FA8E0}
+@property --mtn2{syntax:'<color>';inherits:true;initial-value:#B7C6F0}
+@property --hill1{syntax:'<color>';inherits:true;initial-value:#CFE9D5}
+@property --hill2{syntax:'<color>';inherits:true;initial-value:#B5DDBF}
+@property --hill3{syntax:'<color>';inherits:true;initial-value:#9ED0AB}
+@property --cloud{syntax:'<color>';inherits:true;initial-value:#FFFFFF}
+@property --tree{syntax:'<color>';inherits:true;initial-value:#2B5A63}
+@property --sea{syntax:'<color>';inherits:true;initial-value:#4FB6D9}
+@property --bridge{syntax:'<color>';inherits:true;initial-value:#E4553F}
+@property --title{syntax:'<color>';inherits:true;initial-value:#2E4A9E}
+
+:root{
+  --bg:#FFF3DF; --surface:#FFFFFF; --ink:#12303B; --muted:#5E6E78; --line:#EFDFC3; --soft:#FBF1DE;
+  --aqua:#0B97AE; --aqua-ink:#FFFFFF; --btn:#1D2B33; --btn-ink:#FFFFFF;
+  --info-bg:#E6F3F8; --info-ink:#17434F; --warn-bg:#FFF1D6; --warn-ink:#6B4300;
+  --shadow:0 18px 44px rgba(150,90,30,.16);
+  --display:'Fredoka','Nunito',system-ui,sans-serif; --body:'Nunito',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1A24; --surface:#16293A; --ink:#E7F1F5; --muted:#94AEBB; --line:#27414F; --soft:#1D3446;
+  --aqua:#3CCBE6; --aqua-ink:#06242C; --btn:#EAF3F6; --btn-ink:#0E2430;
+  --info-bg:#173F4B; --info-ink:#C9EAF2; --warn-bg:#3B2E10; --warn-ink:#FBD89A; --shadow:0 18px 44px rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1A24; --surface:#16293A; --ink:#E7F1F5; --muted:#94AEBB; --line:#27414F; --soft:#1D3446;
+  --aqua:#3CCBE6; --aqua-ink:#06242C; --btn:#EAF3F6; --btn-ink:#0E2430;
+  --info-bg:#173F4B; --info-ink:#C9EAF2; --warn-bg:#3B2E10; --warn-ink:#FBD89A; --shadow:0 18px 44px rgba(0,0,0,.4); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:0;padding-right:0;padding-top:0;padding-bottom:120px;overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
+h2{font-size:22px}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--aqua);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ===== world hero ===== */
+.world{position:relative;display:flex;flex-direction:column;align-items:center;min-height:clamp(720px,100svh,900px);padding-bottom:104px;overflow:hidden;
+  --sky1:#5EC3F2;--sky2:#FFF0D6;--sun:#FFD66B;--mtn1:#EBC27A;--mtn2:#D9A25E;--sea:#4FB6D9;--bridge:#E4553F;--hill1:#E9D79C;--hill2:#A9D18A;--hill3:#86BE72;--cloud:#FFFFFF;--tree:#2F8F6B;--title:#2A4BA0;
+  transition:--sky1 1.2s,--sky2 1.2s,--sun 1.2s,--mtn1 1.2s,--mtn2 1.2s,--sea 1.2s,--bridge 1.2s,--hill1 1.2s,--hill2 1.2s,--hill3 1.2s,--cloud 1.2s,--tree 1.2s,--title 1.2s}
+.world[data-state="perky"]{--sky1:#4FB9F5;--sky2:#FFE8B8;--sun:#FFC93C;--mtn1:#F0B866;--mtn2:#E09A4F;--sea:#3FA9E0;--hill1:#EBD38A;--hill2:#A2D17E;--hill3:#7DBB63;--title:#2F4AB8}
+.world[data-state="buzz"]{--sky1:#FF8A5B;--sky2:#FFD98A;--sun:#FF5E3A;--mtn1:#DE8A5E;--mtn2:#BD6A4B;--sea:#E9856E;--bridge:#B02E2A;--hill1:#F0C27A;--hill2:#C9B25E;--hill3:#A99A4C;--cloud:#FFE9C9;--tree:#7A3B2E;--title:#B83A1A}
+.world[data-state="sick"]{--sky1:#A9B59A;--sky2:#DADFC4;--sun:#CBD59A;--mtn1:#B8B38A;--mtn2:#98A07A;--sea:#8DA79A;--bridge:#A5593F;--hill1:#C5C79A;--hill2:#A3B685;--hill3:#8CA373;--cloud:#A9B3A5;--tree:#3C5A44;--title:#4B6B3A}
+.scene{position:absolute;inset:0;width:100%;height:100%}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .scene{filter:brightness(.6) saturate(.85)}}
+:root[data-theme="dark"] .scene{filter:brightness(.6) saturate(.85)}
+.cl{animation:drift 26s ease-in-out infinite alternate}
+.cl.c2{animation-duration:34s;animation-direction:alternate-reverse}
+.cl.c3{animation-duration:30s}
+@keyframes drift{from{transform:translateX(-60px)}to{transform:translateX(60px)}}
+.sunrays{transform-box:fill-box;transform-origin:center;animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rain{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1s;
+  background:repeating-linear-gradient(100deg,rgba(255,255,255,.0) 0 14px,rgba(255,255,255,.35) 14px 15px,rgba(255,255,255,0) 15px 34px);background-size:200px 200px;animation:rain .5s linear infinite}
+@keyframes rain{to{background-position:-60px 200px}}
+.world[data-state="sick"] .rain{opacity:.55}
+.top{position:absolute;top:max(14px,env(safe-area-inset-top,0px));left:0;right:0;display:flex;align-items:center;gap:10px;z-index:3}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:19px;color:#12303B;background:rgba(255,255,255,.7);padding:6px 14px 6px 8px;border-radius:99px;backdrop-filter:blur(6px)}
+.hero-text{position:relative;width:100%;margin-top:max(74px,9vh);padding-bottom:46px;text-align:center;z-index:1}
+.giant{font-family:var(--display);font-weight:700;line-height:.9;font-size:clamp(92px,24vw,190px);color:var(--title);
+  text-shadow:.035em .045em 0 rgba(255,255,255,.95);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.giant small{font-size:.32em;margin-left:.1em;letter-spacing:.04em}
+:root[data-theme="dark"] .giant{color:#DCE8FF;text-shadow:.035em .045em 0 rgba(8,16,32,.6)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .giant{color:#DCE8FF;text-shadow:.035em .045em 0 rgba(8,16,32,.6)}}
+.pillrow{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.pill{font-weight:800;font-size:13px;letter-spacing:.07em;text-transform:uppercase;padding:5px 13px;border-radius:99px;background:#1D2B33;color:#fff}
+.of{font-weight:800;font-size:15px;color:#12303B;background:rgba(255,255,255,.9);padding:4px 12px;border-radius:99px}
+.bar{width:min(300px,72vw);height:12px;border-radius:99px;background:rgba(255,255,255,.85);box-shadow:0 2px 8px rgba(20,40,80,.15);margin:10px auto 0;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:#1D2B33;transition:width .9s cubic-bezier(.3,.8,.3,1)}
+.bar.over i{background:#C2392F}
+.heartwrap{position:relative;margin-top:auto;width:min(80vw,380px);z-index:2}
+#heart{width:100%;display:block;overflow:visible}
+.bubble{position:absolute;left:62%;top:-4%;max-width:48%;background:#fff;color:#12303B;border-radius:18px;padding:8px 14px;font-family:var(--display);font-weight:500;font-size:16px;line-height:1.2;box-shadow:0 8px 22px rgba(20,40,80,.2);z-index:3;transition:transform .3s}
+.bubble::after{content:"";position:absolute;left:-8px;bottom:12px;width:16px;height:16px;background:#fff;transform:rotate(45deg);border-radius:3px}
+.bubble.hop{animation:hop .4s cubic-bezier(.3,1.6,.5,1)}
+@keyframes hop{from{transform:scale(.6)}}
+
+/* heart paint + motion */
+#heart .body{fill:url(#gRed);transition:fill .5s}
+#heart[data-state="buzz"] .body{fill:url(#gHot)}
+#heart[data-state="sick"] .body{fill:url(#gGreen)}
+#heart{--h2:#CF3743;--h3:#DA3F4B}
+#heart[data-state="buzz"]{--h2:#C42F3A;--h3:#D3414A}
+#heart[data-state="sick"]{--h2:#729C50;--h3:#7CA45A}
+.limb{stroke:var(--h2);transition:stroke .5s}
+.foot{fill:var(--h2);transition:fill .5s}
+.hand{fill:var(--h3);transition:fill .5s}
+.f{display:none}
+#heart[data-state="calm"] .f-calm,#heart[data-state="perky"] .f-perky,#heart[data-state="buzz"] .f-buzz,#heart[data-state="sick"] .f-sick{display:block}
+.beat{transform-box:fill-box;transform-origin:50% 55%;animation:beat var(--dur,1.3s) ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.04)}28%{transform:scale(1)}42%{transform:scale(1.028)}}
+#heart[data-state="buzz"] .char{animation:shake .14s linear infinite}
+#heart[data-state="sick"] .char{animation:sway 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes shake{0%,100%{transform:translate(0,34px)}25%{transform:translate(1.6px,33px)}75%{transform:translate(-1.6px,35px)}}
+@keyframes sway{0%,100%{transform:translate(0,34px) rotate(-2deg)}50%{transform:translate(0,34px) rotate(2deg)}}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1);transform-box:fill-box;transform-origin:50% 100%}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+@media (prefers-reduced-motion:reduce){.beat,.char,.cl,.sunrays,.rain,.pop,.bubble.hop{animation:none!important}.bar i{transition:none}}
+
+/* ===== sheet ===== */
+.sheet{position:relative;z-index:4;margin-top:-96px;display:grid;gap:34px;max-width:760px;margin-left:auto;margin-right:auto}
+.card{background:var(--surface);border-radius:30px;padding:20px;box-shadow:var(--shadow);position:relative}
+.hint{color:var(--muted);font-size:13px;margin:2px 0 0}
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.go{width:46px;height:46px;border-radius:15px;border:0;background:var(--btn);color:var(--btn-ink);display:grid;place-items:center;cursor:pointer;flex:none;transition:transform .15s}
+.go:active{transform:scale(.92)}
+.go svg{width:20px;height:20px}
+.soft{border:0;background:var(--soft);border-radius:14px;padding:9px 14px;font-weight:700;cursor:pointer}
+
+/* shop street */
+.street{margin-top:20px}
+.awning{position:absolute;left:14px;right:14px;top:-22px;height:26px;border-radius:12px 12px 0 0;background:repeating-linear-gradient(90deg,#FF6F59 0 28px,#FFF6E0 28px 56px)}
+.awning::after{content:"";position:absolute;left:0;right:0;top:100%;height:14px;
+  background:radial-gradient(circle at 14px 0,#FF6F59 14px,#0000 15px) 0 0/56px 14px repeat-x,radial-gradient(circle at 42px 0,#FFF6E0 14px,#0000 15px) 0 0/56px 14px repeat-x}
+.tiles{display:flex;gap:10px;overflow-x:auto;padding:22px 4px 12px;margin:0 -4px;scroll-snap-type:x proximity}
+.tile{flex:none;scroll-snap-align:start;width:104px;border:0;background:var(--soft);border-radius:22px;padding:8px 6px 10px;cursor:pointer;display:grid;justify-items:center;gap:2px;font-weight:800;font-size:12.5px;transition:transform .2s,box-shadow .2s}
+.tile[aria-pressed="true"]{background:var(--surface);box-shadow:0 0 0 3px var(--aqua),0 10px 22px rgba(13,169,204,.25);transform:translateY(-4px)}
+.tile svg{width:84px;height:84px}
+.list{display:grid;gap:8px;max-height:360px;overflow-y:auto;padding:2px 4px 2px 0;margin-top:6px}
+.drink{display:grid;grid-template-columns:44px minmax(0,1fr) auto auto auto;gap:10px;align-items:center;padding:8px 10px 8px 8px;border-radius:20px;background:var(--soft)}
+.drink .dn{min-width:0;line-height:1.25}
+.drink .dn b{display:block;font-size:14.5px}
+.drink .dn span{font-size:12px;color:var(--muted)}
+.ico{width:44px;height:44px;border-radius:14px;background:#EAF6F8;display:grid;place-items:center}
+.drink select,.cust input{border:0;background:var(--surface);border-radius:12px;padding:8px 10px;max-width:150px;box-shadow:0 1px 0 var(--line)}
+.mg{font-family:var(--display);font-weight:600;min-width:62px;text-align:right;font-variant-numeric:tabular-nums}
+.cust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
+.cust label{display:grid;gap:4px;font-weight:700;font-size:13px}
+.cust input{max-width:none;width:100%}
+
+/* journal (notebook) */
+.journal{padding-left:44px;background-image:radial-gradient(circle at 20px 30px,var(--bg) 6px,#0000 7px);background-size:40px 44px;background-repeat:repeat-y;background-color:var(--surface)}
+.logrow{display:grid;grid-template-columns:40px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1.5px dashed var(--line)}
+.logrow:last-of-type{border:0}
+.logrow small{color:var(--muted);display:block}
+.logrow .ico{width:40px;height:40px}
+.x{position:relative;border:0;background:var(--soft);color:var(--muted);width:30px;height:30px;border-radius:10px;font-size:18px;line-height:1;cursor:pointer}
+.tot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-family:var(--display);font-size:20px;font-weight:600}
+.banner{background:var(--info-bg);color:var(--info-ink);border-radius:16px;padding:10px 12px;margin-bottom:10px;display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.tagex{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:var(--info-bg);color:var(--info-ink);border-radius:6px;padding:1px 6px;margin-left:6px}
+.empty{color:var(--muted);margin:0}
+
+/* health office */
+.office{margin-top:14px}
+.roof{position:absolute;left:5%;right:5%;top:-34px;height:36px;background:var(--btn);clip-path:polygon(0 100%,7% 0,93% 0,100% 100%);display:grid;place-items:center}
+.roof span{color:var(--btn-ink);font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+.sum{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;list-style:none;font-family:var(--display);font-weight:600;font-size:22px}
+.sum::-webkit-details-marker{display:none}
+.sum::after{content:"+";font-size:24px;color:var(--aqua);margin-left:auto;padding-left:8px}
+details[open]>.sum::after{content:"\2212"}
+.sumv{font-family:var(--body);font-size:13px;font-weight:800;color:var(--muted)}
+.sw{display:flex;align-items:center;gap:12px;font-weight:800;cursor:pointer}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw .trk{width:50px;height:30px;border-radius:99px;background:var(--line);position:relative;transition:background .2s;flex:none}
+.sw .trk::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.sw input:checked+.trk{background:var(--aqua)}
+.sw input:checked+.trk::after{transform:translateX(20px)}
+.sw input:focus-visible+.trk{outline:3px solid var(--aqua);outline-offset:2px}
+.pz{display:grid;gap:14px;margin-top:14px}
+.pz[aria-disabled="true"]{opacity:.45;pointer-events:none}
+.pz label.f1{display:grid;gap:4px;font-weight:700;font-size:13px}
+.pz select,.pz input[type=number]{border:0;background:var(--soft);border-radius:14px;padding:10px 12px;width:100%;max-width:340px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0}
+.chip span{display:inline-block;background:var(--soft);border-radius:99px;padding:7px 14px;font-weight:700;cursor:pointer}
+.chip input:checked+span{background:var(--aqua);color:var(--aqua-ink)}
+.chip input:focus-visible+span{outline:3px solid var(--aqua);outline-offset:2px}
+.why{margin:12px 0 0;padding:12px 14px;border-radius:18px;background:var(--info-bg);color:var(--info-ink);font-size:14px}
+.why b{font-family:var(--display);font-size:17px}
+.why ul{margin:6px 0 0;padding-left:18px}
+.why li.bind{font-weight:800}
+.tips{margin-top:16px}
+.tips h3{font-size:17px;margin-bottom:8px}
+.notes{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.notes li{padding:10px 12px;border-radius:16px;background:var(--info-bg);color:var(--info-ink);font-size:14px}
+.notes li.warn{background:var(--warn-bg);color:var(--warn-ink)}
+.more{cursor:pointer;font-weight:800;color:var(--aqua);margin-top:10px;list-style:none}
+.more::-webkit-details-marker{display:none}
+
+/* library: signposts */
+.lib h2{margin:0 4px 4px}
+.signs{display:grid;gap:10px;margin-top:12px}
+details.fact summary{list-style:none;cursor:pointer;font-family:var(--display);font-weight:600;font-size:17px;color:#3A2410;
+  background:linear-gradient(180deg,#F0D6A6,#E2B976);padding:12px 44px 12px 18px;position:relative;
+  clip-path:polygon(0 0,94% 0,100% 50%,94% 100%,0 100%);box-shadow:0 6px 0 rgba(0,0,0,.12)}
+details.fact summary::-webkit-details-marker{display:none}
+details.fact summary::after{content:"+";position:absolute;right:26px;top:50%;transform:translateY(-52%);font-size:22px}
+details.fact[open] summary::after{content:"\2212"}
+details.fact:nth-child(odd) summary{margin-right:10%}
+details.fact:nth-child(even) summary{margin-left:10%}
+details.fact p{margin:8px 14px 2px;color:var(--muted);font-size:14px}
+.post{width:10px;background:#B68A4C;border-radius:4px;display:none}
+
+footer{margin-top:10px;color:var(--muted);font-size:13px;display:grid;gap:8px;text-align:center}
+footer details{text-align:left}
+footer details summary{cursor:pointer;font-weight:800;color:var(--ink);text-align:center}
+footer a{color:var(--aqua)}
+footer ul{margin:6px 0 0;padding-left:18px}
+.ground{display:block;width:100%;height:70px;margin-bottom:-4px}
+
+/* ===== dock ===== */
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;
+  display:flex;align-items:center;gap:6px;padding:8px;border-radius:32px;background:var(--surface);box-shadow:0 18px 44px rgba(20,40,80,.28)}
+.dk{width:46px;height:46px;border-radius:15px;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:var(--muted);transition:background .2s,color .2s}
+.dk svg{width:22px;height:22px}
+.dk[aria-current="true"]{background:var(--soft);color:var(--aqua)}
+.sep{width:1.5px;height:30px;background:var(--line);margin:0 4px}
+.dock .go{width:52px;height:52px;border-radius:17px}
+
+@media (max-width:560px){
+  .drink{grid-template-columns:44px minmax(0,1fr) auto}
+  .drink select{grid-column:2/3;max-width:none;width:100%}
+  .drink .mg{grid-column:2/3;text-align:left}
+  .drink .go{grid-column:3/4;grid-row:1/4;align-self:center}
+  .bubble{font-size:14px;left:56%}
+}
+
+/* ===== iPhone / touch polish ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent;padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+button,summary,label.chip,.tile,.dk,.go,.soft{touch-action:manipulation;-webkit-touch-callout:none}
+button{-webkit-appearance:none;appearance:none}
+.sheet{grid-template-columns:minmax(0,1fr)}
+.sheet>*,.card{min-width:0}
+.tiles{-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.list{overscroll-behavior:contain}
+.world{min-height:clamp(720px,100svh,900px)}
+@supports (height:100dvh){.world{min-height:clamp(720px,100dvh,900px)}}
+@media (max-width:820px){
+  /* 16px+ stops iOS Safari zooming the page when a field is focused */
+  select,input[type=number],input[type=text],.drink select,.cust input,.pz select,.pz input[type=number]{font-size:16px}
+  /* thumb-sized targets (44pt) */
+  .soft{min-height:44px}
+  .chip span{padding:12px 16px}
+  .chip{display:inline-block}
+  .tile{min-height:44px}
+  summary{min-height:44px}
+  .sum{min-height:48px}
+  details.fact summary{padding-top:14px;padding-bottom:14px}
+  footer a{display:inline-block;padding:13px 2px}
+  footer details summary{display:flex;align-items:center;justify-content:center}
+}
+@media (max-width:420px){
+  .card{padding:16px;border-radius:26px}
+  .dock{gap:2px;padding:6px;max-width:calc(100vw - 20px)}
+  .dk{width:44px;height:44px}
+  .sep{margin:0 2px}
+  .dock .go{width:50px;height:50px}
+  .logo{font-size:17px}
+}
+@media (max-width:350px){
+  .dk{width:40px;height:40px}.dk svg{width:20px;height:20px}
+  .dock .go{width:46px;height:46px}
+}
+@media (hover:none){.go:hover,.tile:hover{transform:none}}
+.x::after{content:"";position:absolute;inset:-7px}
+</style>
+
+<div class="app">
+  <section class="world" id="home" data-state="calm" aria-label="Your heart and its world">
+    <svg class="scene" viewBox="0 0 1000 720" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky1)"/><stop offset="1" style="stop-color:var(--sky2)"/></linearGradient>
+        <radialGradient id="glow"><stop offset="0" style="stop-color:var(--sun)" stop-opacity=".85"/><stop offset="1" style="stop-color:var(--sun)" stop-opacity="0"/></radialGradient>
+        <filter id="fog" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="9"/></filter>
+        <symbol id="palm" viewBox="0 0 70 130" overflow="visible"><path d="M36 128 C32 92 39 54 34 24" stroke="#8B5E3C" stroke-width="5" fill="none" stroke-linecap="round"/><g style="fill:var(--tree)"><path d="M34 24 C18 6 2 10 -4 28 C10 16 22 16 34 24Z"/><path d="M34 24 C22 -4 6 -4 -2 8 C12 4 24 10 34 24Z"/><path d="M34 24 C38 -8 52 -14 62 -8 C52 0 44 8 34 24Z"/><path d="M34 24 C46 2 64 4 72 18 C58 12 46 14 34 24Z"/><path d="M34 24 C50 12 66 22 70 40 C58 28 46 26 34 24Z"/><path d="M34 24 C20 14 6 24 4 42 C14 30 24 28 34 24Z"/></g><circle cx="34" cy="26" r="3.4" fill="#6B4528"/></symbol>
+        <symbol id="cloud" viewBox="0 0 120 50" overflow="visible"><path d="M8 46 Q-4 46 4 34 Q8 22 26 26 Q30 2 56 8 Q74 -4 90 16 Q118 12 118 34 Q122 46 106 46Z"/></symbol>
+      </defs>
+      <rect width="1000" height="720" fill="url(#sky)"/>
+      <circle cx="150" cy="130" r="190" fill="url(#glow)"/>
+      <g class="sunrays"><circle cx="150" cy="130" r="62" style="fill:var(--sun)"/></g>
+      <g class="cl c1" style="fill:var(--cloud);opacity:.95"><use href="#cloud" x="620" y="90" width="190" height="80"/></g>
+      <g class="cl c2" style="fill:var(--cloud);opacity:.8"><use href="#cloud" x="330" y="215" width="150" height="62"/></g>
+      <g class="cl c3" style="fill:var(--cloud);opacity:.9"><use href="#cloud" x="820" y="270" width="130" height="54"/></g>
+      <g fill="none" stroke="#3B5266" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M470 120 q9 -9 18 0 q9 -9 18 0"/><path d="M520 150 q7 -7 14 0 q7 -7 14 0"/></g>
+      <rect y="468" width="1000" height="252" style="fill:var(--sea)"/>
+      <g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M300 528h28M372 548h20M500 520h30M250 560h22M560 556h26"/></g>
+      <g style="color:var(--bridge)" transform="translate(-90,0)">
+        <path d="M123 475V508M147 449V508M170 428V508M193 414V508M217 404V508M256 422V508M273 441V508M289 456V508M306 467V508M322 475V508M339 480V508M355 482V508M371 480V508M388 475V508M404 467V508M421 456V508M437 441V508M454 422V508M494 405V508M518 414V508M542 428V508M568 449V508M594 475V508" stroke="currentColor" stroke-width="1.6" fill="none" opacity=".85"/>
+        <path d="M90 510 H640" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <rect x="234" y="396" width="12" height="124" rx="3" fill="currentColor"/><rect x="464" y="396" width="12" height="124" rx="3" fill="currentColor"/>
+        <rect x="228" y="426" width="24" height="5" rx="2" fill="currentColor"/><rect x="228" y="462" width="24" height="5" rx="2" fill="currentColor"/>
+        <rect x="458" y="426" width="24" height="5" rx="2" fill="currentColor"/><rect x="458" y="462" width="24" height="5" rx="2" fill="currentColor"/>
+        <path d="M100 506 Q170 402 240 400 Q355 562 470 400 Q540 402 620 506" fill="none" stroke="currentColor" stroke-width="3.5"/>
+      </g>
+      <g><path d="M340 560 h56 l-9 11 h-38z" fill="#fff"/><path d="M368 558 V526 L392 558Z" fill="#FFF6E0"/><path d="M364 558 V536 L346 558Z" fill="#FFD9A0"/></g>
+      <path d="M0 590 L0 440 C70 428 140 470 205 548 L205 590Z" style="fill:var(--mtn1)"/>
+      <path d="M490 610 C505 520 545 440 650 384 C760 330 880 322 1000 362 V620Z" style="fill:var(--mtn1)"/>
+      <ellipse cx="150" cy="478" rx="190" ry="20" fill="#fff" opacity=".6" filter="url(#fog)"/>
+      <ellipse cx="520" cy="548" rx="150" ry="12" fill="#fff" opacity=".4" filter="url(#fog)"/>
+      <path d="M0 565 C120 523 260 535 380 565 C520 599 660 535 800 531 C900 529 960 549 1000 559 V720H0Z" style="fill:var(--mtn2)"/>
+      <path d="M0 622 C180 592 360 628 520 614 C700 600 860 586 1000 606 V720H0Z" style="fill:var(--hill1)"/>
+      <use href="#palm" x="22" y="462" width="84" height="156" style="fill:var(--tree)"/>
+      <use href="#palm" x="118" y="540" width="42" height="78"/>
+      <g transform="translate(176,588)"><rect x="-2" y="-30" width="4" height="34" fill="#8B5E3C"/><path d="M-36 -26 Q-18 -56 0 -58 L0 -26Z" fill="#FF7A59"/><path d="M0 -58 Q18 -56 36 -26 L0 -26Z" fill="#FFF6E0"/></g>
+      <g transform="translate(222,606) rotate(-12)"><ellipse rx="7" ry="30" fill="#5CC7D9"/><path d="M-7 -4 H7" stroke="#fff" stroke-width="3"/></g>
+      <g transform="translate(240,608) rotate(-6)"><ellipse rx="7" ry="32" fill="#FFB84D"/><path d="M-7 -6 H7" stroke="#fff" stroke-width="3"/></g>
+      <use href="#palm" x="728" y="474" width="78" height="146"/>
+      <use href="#palm" x="900" y="458" width="92" height="170"/>
+      <g transform="translate(790,548)"><rect x="0" y="40" width="124" height="56" fill="#FBEBD0"/><rect x="84" y="2" width="32" height="42" fill="#FBEBD0"/><path d="M80 4 H120 L100 -12Z" fill="#D9694A"/><path d="M-6 44 H130 L116 22 H10Z" fill="#D9694A"/><path d="M96 28 v-8 a4 4 0 0 1 8 0 v8Z" fill="#2E8C9A"/><path d="M16 96 V70 a11 11 0 0 1 22 0 V96Z" fill="#2E8C9A"/><rect x="52" y="58" width="56" height="9" fill="#FF7A59"/><path d="M52 58 h8 v9 h-8z M68 58 h8 v9 h-8z M84 58 h8 v9 h-8z M100 58 h8 v9 h-8z" fill="#FFF6E0"/><rect x="58" y="70" width="44" height="22" rx="3" fill="#CFEAF2"/></g>
+      <path d="M0 664 C160 636 340 656 500 668 C680 682 860 636 1000 654 V720H0Z" style="fill:var(--hill2)"/>
+      <path d="M0 700 C250 684 750 684 1000 700 V720H0Z" style="fill:var(--hill3)"/>
+    </svg>
+    <div class="rain" aria-hidden="true"></div>
+
+    <header class="top gut"><div class="logo"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 42 C10 33 4 24 7 15 C9 8 19 7 24 14 C29 7 39 8 41 15 C44 24 38 33 24 42Z" fill="#E43D35"/><circle cx="19" cy="22" r="2.6" fill="#1b1010"/><circle cx="29" cy="22" r="2.6" fill="#1b1010"/></svg>Caffeine Heart</div></header>
+
+    <div class="hero-text gut">
+      <div class="giant"><span id="mgTotal">0</span><small>mg</small></div>
+      <div class="pillrow"><span class="pill" id="statePill">Calm</span><span class="of" id="ofLine">of 400 mg suggested</span></div>
+      <div class="bar" id="bar"><i id="barFill"></i></div>
+    </div>
+
+    <div class="heartwrap">
+      <div class="bubble" id="bubble">Hi! What are we sipping?</div>
+      <svg id="heart" viewBox="-40 0 380 380" data-state="calm" role="img" aria-label="Plump heart character">
+        <defs>
+          <radialGradient id="gRed" cx="0.3" cy="0.25" r="0.9"><stop offset="0" stop-color="#FF9A9C"/><stop offset="0.45" stop-color="#EE4B55"/><stop offset="1" stop-color="#A62A36"/></radialGradient>
+          <radialGradient id="gHot" cx="0.3" cy="0.25" r="0.9"><stop offset="0" stop-color="#FF8F8A"/><stop offset="0.45" stop-color="#E5333A"/><stop offset="1" stop-color="#8F1D28"/></radialGradient>
+          <radialGradient id="gGreen" cx="0.3" cy="0.25" r="0.9"><stop offset="0" stop-color="#D5EBA0"/><stop offset="0.5" stop-color="#8FB46A"/><stop offset="1" stop-color="#587A3D"/></radialGradient>
+          <filter id="blur5" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>
+          <clipPath id="mCalm"><path d="M138 178 Q150 198 162 178 Q150 185 138 178Z"/></clipPath>
+          <clipPath id="mPerky"><path d="M128 176 Q150 212 172 176Z"/></clipPath>
+        </defs>
+        <ellipse cx="150" cy="352" rx="100" ry="10" fill="#0A2A1A" opacity="0.2" filter="url(#blur5)"/>
+        <g id="ground"></g>
+        <g class="char" transform="translate(0,34)">
+          <g class="legs">
+            <path class="limb" d="M124 250 L122 276 M176 250 L178 276" stroke-width="17" stroke-linecap="round" fill="none"/>
+            <ellipse class="foot" cx="114" cy="288" rx="23" ry="11"/><ellipse class="foot" cx="186" cy="288" rx="23" ry="11"/>
+            <ellipse cx="109" cy="284" rx="11" ry="3.5" fill="#fff" opacity="0.5"/><ellipse cx="181" cy="284" rx="11" ry="3.5" fill="#fff" opacity="0.5"/>
+          </g>
+          <g class="beat" id="beat">
+            <path class="body" d="M150 258 C70 232 28 176 42 122 C54 72 120 54 150 98 C180 54 246 72 258 122 C272 176 230 232 150 258Z"/>
+            <ellipse cx="90" cy="92" rx="34" ry="17" fill="#fff" opacity="0.5" filter="url(#blur5)" transform="rotate(-28 90 92)"/>
+            <ellipse cx="74" cy="100" rx="10" ry="5.5" fill="#fff" opacity="0.9" transform="rotate(-35 74 100)"/>
+            <ellipse cx="218" cy="96" rx="14" ry="8" fill="#fff" opacity="0.25" filter="url(#blur5)"/>
+            <g class="f f-calm">
+              <ellipse cx="78" cy="184" rx="18" ry="11" fill="#FF9FA8" opacity="0.85" filter="url(#blur5)"/><ellipse cx="222" cy="184" rx="18" ry="11" fill="#FF9FA8" opacity="0.85" filter="url(#blur5)"/>
+              <ellipse cx="110" cy="152" rx="14" ry="18" fill="#1B1010"/><ellipse cx="190" cy="152" rx="14" ry="18" fill="#1B1010"/>
+              <circle cx="105" cy="145" r="6" fill="#fff"/><circle cx="185" cy="145" r="6" fill="#fff"/><circle cx="115" cy="160" r="2.8" fill="#fff"/><circle cx="195" cy="160" r="2.8" fill="#fff"/>
+              <path d="M138 178 Q150 198 162 178 Q150 185 138 178Z" fill="#4E1010"/>
+              <g clip-path="url(#mCalm)"><ellipse cx="150" cy="190" rx="8" ry="4" fill="#F2727F"/></g>
+            </g>
+            <g class="f f-perky">
+              <ellipse cx="74" cy="184" rx="21" ry="12" fill="#FF8FA0" opacity="0.9" filter="url(#blur5)"/><ellipse cx="226" cy="184" rx="21" ry="12" fill="#FF8FA0" opacity="0.9" filter="url(#blur5)"/>
+              <path d="M94 158 Q110 132 126 158 M174 158 Q190 132 206 158" stroke="#1B1010" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M128 176 Q150 212 172 176Z" fill="#4E1010"/>
+              <g clip-path="url(#mPerky)"><ellipse cx="150" cy="200" rx="14" ry="8" fill="#F2727F"/></g>
+              <path d="M52 66 l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" fill="#FFD25E"/><path d="M246 62 l2 7 7 2-7 2-2 7-2-7-7-2 7-2z" fill="#FFD25E"/>
+            </g>
+            <g class="f f-buzz">
+              <ellipse cx="78" cy="186" rx="16" ry="10" fill="#FF9FA8" opacity="0.6" filter="url(#blur5)"/><ellipse cx="222" cy="186" rx="16" ry="10" fill="#FF9FA8" opacity="0.6" filter="url(#blur5)"/>
+              <ellipse cx="110" cy="152" rx="19" ry="22" fill="#fff"/><ellipse cx="190" cy="152" rx="19" ry="22" fill="#fff"/>
+              <circle cx="110" cy="152" r="5" fill="#1B1010"/><circle cx="190" cy="152" r="5" fill="#1B1010"/>
+              <path d="M88 120 L124 130 M212 120 L176 130" stroke="#6E141C" stroke-width="7" stroke-linecap="round"/>
+              <path d="M126 192 q6 -9 12 0 t12 0 t12 0 t12 0" stroke="#1B1010" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M242 96 q10 17 0 25 q-10 -8 0 -25z" fill="#8FDCF2"/>
+              <path d="M20 128 l-14 -5 M20 148 l-16 0 M280 128 l14 -5 M280 148 l16 0" stroke="#1B1010" stroke-opacity=".4" stroke-width="5" stroke-linecap="round"/>
+            </g>
+            <g class="f f-sick">
+              <ellipse cx="78" cy="186" rx="18" ry="11" fill="#4F6F33" opacity="0.4" filter="url(#blur5)"/><ellipse cx="222" cy="186" rx="18" ry="11" fill="#4F6F33" opacity="0.4" filter="url(#blur5)"/>
+              <path d="M92 138 L120 153 L92 168 M208 138 L180 153 L208 168" stroke="#2E421C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M130 192 Q140 180 150 190 Q160 200 170 188" stroke="#2E421C" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <g transform="rotate(-14 160 192)"><rect x="138" y="187" width="78" height="11" rx="5.5" fill="#F4F7F8" stroke="#1D2B33" stroke-width="2.5"/><rect x="142" y="191" width="30" height="3.5" rx="1.7" fill="#E43D35"/></g>
+              <path d="M236 98 q10 17 0 25 q-10 -8 0 -25z" fill="#BFE6F2"/>
+            </g>
+          </g>
+          <path class="limb" d="M48 182 Q26 192 30 214" stroke-width="19" stroke-linecap="round" fill="none"/>
+          <circle class="hand" cx="30" cy="218" r="13"/><circle cx="26" cy="213" r="4" fill="#fff" opacity="0.5"/>
+          <g id="held" transform="translate(243,98)"></g>
+          <path class="limb" d="M252 184 Q274 188 268 156" stroke-width="19" stroke-linecap="round" fill="none"/>
+          <circle class="hand" cx="267" cy="152" r="13"/><circle cx="263" cy="147" r="4" fill="#fff" opacity="0.5"/>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <main class="sheet gut">
+    <section class="card street" id="street" aria-label="Shop street">
+      <div class="awning" aria-hidden="true"></div>
+      <div class="head"><div><h2>Shop street</h2><p class="hint" id="catHint">Pick a shop, then a drink.</p></div></div>
+      <div class="tiles" id="tiles" role="group" aria-label="Shops"></div>
+      <div class="list" id="pick"></div>
+    </section>
+
+    <section class="card journal" id="journal" aria-label="Today's drinks">
+      <div class="head"><h2>Today's notebook</h2><button class="soft" id="clear">Clear</button></div>
+      <div id="banner"></div>
+      <div id="log"></div>
+      <div class="tot"><span>Total</span><span><span id="mgTotal2">0</span> mg</span></div>
+    </section>
+
+    <section class="card office" id="office" aria-label="Health office">
+      <div class="roof" aria-hidden="true"><span>Health office</span></div>
+      <details id="gd">
+        <summary class="sum"><span>Your guidance</span><span class="sumv" id="sumv">400 mg suggested</span></summary>
+        <div style="margin-top:12px">
+          <label class="sw"><input type="checkbox" id="pz"><span class="trk"></span><span>Personalize my suggested amount</span></label>
+          <p class="hint" style="margin-top:8px">Optional. Off uses the adult figure of 400 mg a day. These are guideline suggestions, not hard limits.</p>
+          <div class="pz" id="pzBox" aria-disabled="true">
+            <label class="f1" for="age">Age group
+              <select id="age"><option value="adult">Adult, 18 to 64</option><option value="senior">65 and over</option><option value="teen">Teen, 12 to 17</option><option value="child">Under 12</option></select>
+            </label>
+            <div class="chips" role="group" aria-label="Health profile">
+              <label class="chip"><input type="checkbox" id="c-preg"><span>Pregnant</span></label>
+              <label class="chip"><input type="checkbox" id="c-bp"><span>High blood pressure</span></label>
+              <label class="chip"><input type="checkbox" id="c-diab"><span>Diabetes</span></label>
+              <label class="chip"><input type="checkbox" id="c-rhythm"><span>Heart rhythm condition</span></label>
+              <label class="chip"><input type="checkbox" id="c-sleep"><span>Poor sleep or caffeine-sensitive</span></label>
+            </div>
+            <label class="f1" for="goal">Your own daily goal in mg (for example from your doctor)
+              <input type="number" id="goal" min="0" max="1000" step="10" placeholder="Leave empty to use the guideline">
+            </label>
+          </div>
+          <div class="why" id="why"></div>
+        </div>
+      </details>
+      <div class="tips">
+        <h3>Tips for you</h3>
+        <ul class="notes" id="notes"></ul>
+        <details id="moreNotes" hidden><summary class="more" id="moreSum">See more</summary><ul class="notes" id="notes2" style="margin-top:8px"></ul></details>
+      </div>
+    </section>
+
+    <section class="lib" id="library" aria-label="Signpost library">
+      <h2>Signposts</h2>
+      <p class="hint" style="margin:0 4px">Facts from the research. Tap a sign to read it.</p>
+      <div class="signs" id="facts"></div>
+    </section>
+
+    <footer>
+      <svg class="ground" viewBox="0 0 760 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C140 18 280 50 420 34 C560 18 660 44 760 30 V70 H0Z" style="fill:var(--hill2)"/><use href="#palm" x="60" y="-6" width="24" height="46"/><use href="#palm" x="92" y="8" width="16" height="30"/><use href="#palm" x="660" y="-6" width="24" height="46"/></svg>
+      <p><b>Not medical advice.</b> Caffeine content varies by brand and store. Ask a doctor if you have a heart condition, are pregnant or breastfeeding, take medication, or are sensitive to caffeine.</p>
+      <details><summary>Sources and notes</summary>
+        <p>Most caffeine research is observational, and moderate coffee drinkers may differ in other healthy ways.</p>
+        <ul>
+          <li><a href="https://doi.org/10.1161/CIR.0000000000001454" target="_blank" rel="noopener">AHA Scientific Statement, Caffeine and Cardiovascular Disease (Circulation, vol. 154)</a>: 400 mg/day, blood pressure, diabetes, rhythm, energy drinks.</li>
+          <li><a href="https://food.unl.edu/caffeine-through-life-cycle" target="_blank" rel="noopener">University of Nebraska, Caffeine through the life cycle</a>: AACAP 100 mg for ages 12 to 18, ACOG 200 mg in pregnancy, no known safe amount under 12.</li>
+          <li><a href="https://www.caffeineinformer.com/the-complete-guide-to-starbucks-caffeine" target="_blank" rel="noopener">Caffeine Informer, Starbucks guide</a>: US sizes. Shot counts differ in some countries.</li>
+          <li><a href="https://en.wikipedia.org/wiki/List_of_energy_drinks" target="_blank" rel="noopener">List of energy drinks</a> and <a href="https://thetakeout.com/1823196/what-energy-drink-most-caffeine" target="_blank" rel="noopener">The Takeout</a>: energy drink caffeine per can.</li>
+          <li><a href="https://www.fda.gov/consumers/consumer-updates/spilling-beans-how-much-caffeine-too-much" target="_blank" rel="noopener">FDA, How much caffeine is too much?</a>: 400 mg a day for adults.</li>
+          <li><a href="https://www.acc.org/Latest-in-Cardiology/Clinical-Trials/2025/12/17/18/59/DECAF" target="_blank" rel="noopener">DECAF trial (ACC)</a>: AF recurred in 47% of coffee drinkers vs 64% who abstained.</li>
+          <li><a href="https://www.healthline.com/nutrition/does-matcha-have-caffeine" target="_blank" rel="noopener">Healthline, matcha caffeine</a>: 19 to 44 mg per gram, about 32 mg per gram used here.</li>
+        </ul>
+      </details>
+    </footer>
+  </main>
+
+  <nav class="dock" aria-label="Places">
+    <button class="dk" data-go="home" aria-label="Heart" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-8.6-9A4.6 4.6 0 0 1 12 7.2 4.6 4.6 0 0 1 20.6 11C19 15.6 12 20 12 20Z"/></svg></button>
+    <button class="dk" data-go="street" aria-label="Shop street"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1.6-4.5h12.8L20 9M4 9h16M4 9v10h16V9M9.5 19v-5h5v5"/></svg></button>
+    <button class="dk" data-go="journal" aria-label="Notebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h12v17H6zM9.5 8h5M9.5 12h5M9.5 16h3"/></svg></button>
+    <button class="dk" data-go="office" aria-label="Health office"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l7 2.8v5.4c0 4.2-2.8 7.4-7 8.8-4.2-1.4-7-4.6-7-8.8V6.3zM12 9v6M9 12h6"/></svg></button>
+    <button class="dk" data-go="library" aria-label="Signposts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 6h10l3 2.5-3 2.5H5zM19 13H9l-3 2.5L9 18h10z"/></svg></button>
+    <span class="sep" aria-hidden="true"></span>
+    <button class="go" data-go="street" aria-label="Add a drink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  </nav>
+</div>
+
+<script>
+(function(){
+/* ---------- drink data ---------- */
+  var D=[];
+  function add(cat,id,name,kind,color,sizes,o){var d={cat:cat,id:id,name:name,kind:kind,color:color,sizes:sizes};for(var k in (o||{}))d[k]=o[k];D.push(d);}
+  var SB=function(a){return a};
+  add('coffee','brew','Brewed coffee (paper-filtered)','cup','#7A4B2B',[['8 oz',95],['12 oz',143],['16 oz',190]],{note:'About 12 mg per oz'});
+  add('coffee','esp','Espresso','espresso','#4A2C17',[['Single shot',63],['Double shot',126]],{unfiltered:true,note:'Unfiltered: can raise LDL cholesterol'});
+  add('coffee','capp','Cappuccino','cup','#B98B52',[['Single, 6 oz',63],['Double, 12 oz',126]],{note:'Espresso with milk foam: milk adds no caffeine'});
+  add('coffee','ilatte','Iced latte','iced','#C79A6B',[['Single shot',63],['Double shot',126]],{note:'Espresso over milk and ice: counts by the shots'});
+  add('coffee','decaf','Decaf coffee','cup','#8A6A4F',[['8 oz',2],['12 oz',3]],{note:'Decaf still has a little caffeine'});
+  add('coffee','press','French press, Turkish or boiled coffee','mug','#6B3F22',[['8 oz',95],['12 oz',143]],{unfiltered:true,note:'Unfiltered: raises LDL cholesterol'});
+
+  var SBN='US sizes. Some countries use more shots per size.';
+  add('sbux','pike','Pike Place roast','cup','#7A4B2B',[['Short 8 oz',155],['Tall 12 oz',235],['Grande 16 oz',310],['Venti 20 oz',410]]);
+  add('sbux','blonde','Blonde roast','cup','#B98B52',[['Short 8 oz',180],['Tall 12 oz',270],['Grande 16 oz',360],['Venti 20 oz',475]],{note:'Lighter roast, more caffeine'});
+  add('sbux','dark','Dark roast','cup','#4A2C17',[['Short 8 oz',130],['Tall 12 oz',195],['Grande 16 oz',260],['Venti 20 oz',340]]);
+  add('sbux','amer','Caffè Americano','cup','#5A3820',[['Short 8 oz',75],['Tall 12 oz',150],['Grande 16 oz',225],['Venti 20 oz',300]]);
+  add('sbux','latte','Latte, cappuccino, macchiato (flavored too)','cup','#C79A6B',[['Short 8 oz',75],['Tall 12 oz',75],['Grande 16 oz',150],['Venti 20 oz',150]],{sugary:true,note:'Vanilla, caramel and other syrups add sugar'});
+  add('sbux','mocha','Caffè Mocha','cup','#6A3B24',[['Short 8 oz',90],['Tall 12 oz',95],['Grande 16 oz',175],['Venti 20 oz',185]],{sugary:true});
+  add('sbux','flat','Flat white','cup','#D2AA7C',[['Short 8 oz',130],['Tall 12 oz',130],['Grande 16 oz',195],['Venti 20 oz',195]]);
+  add('sbux','shot','Espresso shots','espresso','#4A2C17',[['Solo (1 shot)',75],['Doppio (2 shots)',150]]);
+  add('sbux','cold','Cold brew','iced','#4A2C17',[['Tall 12 oz',155],['Grande 16 oz',205],['Venti 20 oz',310]]);
+  add('sbux','iced','Iced coffee','iced','#7A4B2B',[['Tall 12 oz',120],['Grande 16 oz',165],['Venti 20 oz',235]]);
+  add('sbux','nitro','Nitro cold brew','iced','#3A2314',[['Tall 12 oz',215],['Grande 16 oz',280]]);
+  add('sbux','dbl','Doubleshot on ice','iced','#8A5A36',[['Tall 12 oz',150],['Grande 16 oz',225],['Venti 24 oz',375]]);
+  add('sbux','matchal','Matcha tea latte','cup','#8DBB4F',[['Short 8 oz',30],['Tall 12 oz',60],['Grande 16 oz',90],['Venti 20 oz',120]],{sugary:true,note:'Sweetened matcha blend'});
+  add('sbux','chai','Chai tea latte','cup','#B5834E',[['Short 8 oz',50],['Tall 12 oz',70],['Grande 16 oz',95],['Venti 20 oz',120]],{sugary:true});
+  add('sbux','refr','Iced Refresher (any flavor, midpoint)','iced','#E9627A',[['Tall 12 oz',40],['Grande 16 oz',50],['Venti 24 oz',78]],{sugary:true,note:'Range varies by flavor'});
+
+  add('tea','matcha','Matcha you whisk yourself','bowl','#8DBB4F',[['Light bowl, 1 g',32],['Standard, 2 g (1 tsp)',64],['Latte strength, 4 g',128]],{note:'About 32 mg per gram of powder'});
+  add('tea','black','Black tea','mug','#B5651D',[['8 oz cup',47]]);
+  add('tea','green','Green tea (steeped)','mug','#BFD98A',[['8 oz cup',28]]);
+  add('tea','white','White tea','mug','#EBDDA6',[['8 oz cup',15]]);
+
+  add('energy','rb','Red Bull','can','#3A6FD8',[['8.4 oz can',80]],{energy:true,sugary:true});
+  add('energy','mon','Monster Energy','can','#2B2F33',[['16 oz can',160]],{energy:true,sugary:true});
+  add('energy','rock','Rockstar','can','#E6B422',[['16 oz can',160]],{energy:true});
+  add('energy','cel','Celsius','can','#F26B8A',[['12 oz can',200]],{energy:true});
+  add('energy','prime','Prime Energy','can','#35C2C9',[['Can',200]],{energy:true});
+  add('energy','ghost','Ghost Energy','can','#7C4DFF',[['16 oz can',200]],{energy:true});
+  add('energy','alani','Alani Nu','can','#F4A0C8',[['12 oz can',200]],{energy:true});
+  add('energy','c4','C4 Original','can','#E8442E',[['16 oz can',200]],{energy:true});
+add('energy','c4u','C4 Ultimate','can','#E8442E',[['16 oz can',300]],{energy:true});
+  add('energy','bang','Bang','can','#2E8BEA',[['16 oz can',300]],{energy:true});
+  add('energy','reign','Reign','can','#1E1E1E',[['16 oz can',300]],{energy:true});
+  add('energy','kick','Mountain Dew Kickstart','can','#9BD33A',[['16 oz can',92]],{energy:true,sugary:true});
+  add('energy','5h','5-hour Energy shot (approx.)','shot','#D9362B',[['1.93 oz shot',200]],{energy:true});
+
+  add('soda','cola','Cola','glass','#3B2417',[['12 oz can',35]],{sugary:true,note:'Coke about 34, Pepsi about 38'});
+  add('soda','dcoke','Diet Coke','glass','#9AA3AB',[['12 oz can',46]],{note:'No sugar, but more caffeine than regular Coke'});
+  add('soda','czero','Coke Zero Sugar','glass','#2B2B2B',[['12 oz can',34]],{note:'No sugar'});
+  add('soda','dew','Mountain Dew','glass','#B6E03C',[['12 oz can',55]],{sugary:true});
+  add('soda','dchoc','Dark chocolate','bar','#4A2A1C',[['1 oz (28 g)',24]]);
+  add('soda','mchoc','Milk chocolate','bar','#8A5A3C',[['1 oz (28 g)',6]]);
+
+  var CATS=[
+    ['coffee','Coffee','Café and home coffee.'],
+    ['sbux','Starbucks','US sizes. Other countries and blonde espresso can differ, use Custom for those.'],
+    ['tea','Tea & matcha','Matcha is counted by grams of powder.'],
+    ['energy','Energy drinks','Standard can. Check your label.'],
+    ['soda','Soda & sweets','Smaller amounts, but they add up.'],
+    ['custom','Custom','Any drink, with the mg from its label.']
+  ];
+
+  /* ---------- icons (48x48 box) ---------- */
+  var K='#1d2b33';
+  function ico(kind,c){
+    switch(kind){
+      case 'cup': return '<path d="M16 3q-3 4 0 7M24 2q-3 4 0 8M32 3q-3 4 0 7" stroke="#9fb4bc" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="9" y="12" width="30" height="6" rx="3" fill="'+K+'"/><path d="M11 18h26l-3.5 27H14.5z" fill="#fff" stroke="'+K+'" stroke-width="2.5" stroke-linejoin="round"/><path d="M12.4 25h23.2l-1.3 12H13.7z" fill="'+c+'"/>';
+      case 'mug': return '<path d="M17 4q-3 4 0 7M26 3q-3 4 0 8" stroke="#9fb4bc" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M34 22h4a5 5 0 010 11h-4" stroke="'+K+'" stroke-width="3" fill="none"/><path d="M8 15h27v17a9 9 0 01-9 9H17a9 9 0 01-9-9z" fill="#fff" stroke="'+K+'" stroke-width="2.5"/><path d="M10 20h23v12a7 7 0 01-7 7H17a7 7 0 01-7-7z" fill="'+c+'"/>';
+      case 'bowl': return '<ellipse cx="24" cy="21" rx="19" ry="6" fill="#fff" stroke="'+K+'" stroke-width="2.5"/><ellipse cx="24" cy="21" rx="15" ry="4" fill="'+c+'"/><path d="M5 21q1 20 19 20t19-20" fill="#E8F1F3" stroke="'+K+'" stroke-width="2.5"/><path d="M5.5 24q3 4 18.5 4t18.5-4q-2 16-18.5 16T5.5 24z" fill="'+c+'" fill-opacity=".0"/><path d="M37 6l-6 13" stroke="#B88A4E" stroke-width="3" stroke-linecap="round"/>';
+      case 'espresso': return '<path d="M20 6q-3 4 0 7M28 5q-3 4 0 8" stroke="#9fb4bc" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M35 24h3a4 4 0 010 9h-3" stroke="'+K+'" stroke-width="3" fill="none"/><path d="M10 18h26v10a10 10 0 01-10 10h-6a10 10 0 01-10-10z" fill="#fff" stroke="'+K+'" stroke-width="2.5"/><path d="M12 21h22v7a8 8 0 01-8 8h-6a8 8 0 01-8-8z" fill="'+c+'"/><ellipse cx="23" cy="41" rx="19" ry="3.5" fill="#fff" stroke="'+K+'" stroke-width="2.5"/>';
+      case 'can': return '<rect x="12" y="6" width="24" height="38" rx="5" fill="#E5ECEE" stroke="'+K+'" stroke-width="2.5"/><rect x="12" y="17" width="24" height="16" fill="'+c+'"/><path d="M12 17h24M12 33h24" stroke="'+K+'" stroke-width="2"/><ellipse cx="24" cy="6.5" rx="12" ry="2.6" fill="#C5D1D5" stroke="'+K+'" stroke-width="2"/><path d="M22 6.5h5" stroke="'+K+'" stroke-width="2" stroke-linecap="round"/>';
+      case 'glass': return '<path d="M12 8h24l-3 36H15z" fill="#fff" fill-opacity=".85" stroke="'+K+'" stroke-width="2.5" stroke-linejoin="round"/><path d="M13.4 17h21.2l-2 25H15.4z" fill="'+c+'"/><rect x="17" y="21" width="9" height="9" rx="2" fill="#fff" fill-opacity=".55" transform="rotate(-10 21 25)"/><rect x="26" y="29" width="8" height="8" rx="2" fill="#fff" fill-opacity=".5" transform="rotate(12 30 33)"/><path d="M30 2l-4 14" stroke="#E64B3C" stroke-width="3" stroke-linecap="round"/>';
+      case 'bar': return '<rect x="8" y="9" width="32" height="32" rx="5" fill="'+c+'" stroke="'+K+'" stroke-width="2.5"/><path d="M8 20h32M8 30h32M19 9v32M29 9v32" stroke="'+K+'" stroke-opacity=".45" stroke-width="2"/><path d="M8 9h32v5H8z" fill="#F3A83B" fill-opacity="0"/>';
+      case 'iced': return '<path d="M30 2l-5 12" stroke="#E64B3C" stroke-width="3" stroke-linecap="round"/><path d="M10 12h28l-3 33H13z" fill="#fff" fill-opacity=".85" stroke="'+K+'" stroke-width="2.5" stroke-linejoin="round"/><path d="M11.6 20h24.8l-2 24H13.6z" fill="'+c+'"/><rect x="16" y="23" width="9" height="9" rx="2" fill="#fff" fill-opacity=".55" transform="rotate(-10 20 27)"/><rect x="25" y="31" width="8" height="8" rx="2" fill="#fff" fill-opacity=".5" transform="rotate(12 29 35)"/><rect x="8" y="9" width="32" height="5" rx="2.5" fill="'+K+'"/>';
+      case 'shot': return '<rect x="17" y="3" width="14" height="8" rx="2" fill="'+K+'"/><path d="M15 11h18v31a3 3 0 01-3 3H18a3 3 0 01-3-3z" fill="'+c+'" stroke="'+K+'" stroke-width="2.5"/><rect x="15.5" y="22" width="17" height="12" fill="#fff" fill-opacity=".8"/>';
+    }
+    return '';
+  }
+  function svg(kind,c,s){s=s||36;return '<svg viewBox="0 0 48 48" width="'+s+'" height="'+s+'" aria-hidden="true">'+ico(kind,c)+'</svg>';}
+
+  
+  var K='#1d2b33';
+  /* ---------- shop illustrations ---------- */
+  var SHOP={
+    coffee:'<path d="M16 50 L26 24 H94 L104 50Z" fill="#fff"/><path d="M26 24h14l-4 26H16z M54 24h14l2 26H50z M82 24h12l10 26H88z" fill="#E43D35"/><rect x="22" y="50" width="76" height="40" rx="8" fill="#C97B4A"/><rect x="22" y="50" width="76" height="8" rx="4" fill="#E0A070"/><circle cx="40" cy="98" r="10" fill="#3A2A22"/><circle cx="40" cy="98" r="4" fill="#D8C9B8"/><circle cx="82" cy="98" r="10" fill="#3A2A22"/><circle cx="82" cy="98" r="4" fill="#D8C9B8"/><path d="M98 76 H114" stroke="#3A2A22" stroke-width="5" stroke-linecap="round"/><rect x="48" y="62" width="24" height="14" rx="4" fill="#fff"/>',
+    sbux:'<rect x="18" y="42" width="84" height="56" rx="6" fill="#F3E6D3"/><path d="M12 42 L20 22 H100 L108 42Z" fill="#1E6B4A"/><circle cx="24" cy="42" r="7" fill="#1E6B4A"/><circle cx="42" cy="42" r="7" fill="#1E6B4A"/><circle cx="60" cy="42" r="7" fill="#1E6B4A"/><circle cx="78" cy="42" r="7" fill="#1E6B4A"/><circle cx="96" cy="42" r="7" fill="#1E6B4A"/><rect x="50" y="64" width="20" height="34" rx="3" fill="#7A4B2B"/><rect x="26" y="58" width="16" height="18" rx="3" fill="#CFEAF2"/><rect x="78" y="58" width="16" height="18" rx="3" fill="#CFEAF2"/><circle cx="60" cy="12" r="8" fill="#fff" stroke="#1E6B4A" stroke-width="3"/>',
+    tea:'<rect x="30" y="72" width="60" height="28" fill="#F6EBD3"/><path d="M12 74 Q60 46 108 74Z" fill="#5FA05A"/><rect x="38" y="48" width="44" height="26" fill="#F6EBD3"/><path d="M28 50 Q60 26 92 50Z" fill="#5FA05A"/><rect x="56" y="14" width="8" height="14" rx="3" fill="#B68A4C"/><rect x="52" y="78" width="16" height="22" rx="3" fill="#8A5A36"/><circle cx="40" cy="62" r="5" fill="#CFEAF2"/><circle cx="80" cy="62" r="5" fill="#CFEAF2"/>',
+    energy:'<rect x="22" y="34" width="76" height="66" rx="12" fill="#7C4DFF"/><rect x="16" y="88" width="88" height="12" rx="5" fill="#3B2A7A"/><rect x="22" y="26" width="76" height="12" rx="6" fill="#5B33D6"/><circle cx="34" cy="32" r="3" fill="#FFD84A"/><circle cx="60" cy="32" r="3" fill="#FFD84A"/><circle cx="86" cy="32" r="3" fill="#FFD84A"/><path d="M66 44 L46 72 H59 L52 94 L78 62 H65Z" fill="#FFD84A"/>',
+    soda:'<rect x="20" y="46" width="80" height="52" rx="8" fill="#FF9EC4"/><path d="M12 48 L60 16 L108 48Z" fill="#F2528C"/><circle cx="60" cy="68" r="14" fill="#fff"/><path d="M60 68 m-10 0 a10 10 0 1 1 10 10 a5 5 0 1 1 0 -10" stroke="#F2528C" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="46" y="82" width="28" height="16" rx="3" fill="#8A5A36"/><circle cx="30" cy="62" r="5" fill="#FFE08A"/><circle cx="90" cy="62" r="5" fill="#FFE08A"/>',
+    custom:'<rect x="26" y="52" width="68" height="46" rx="6" fill="#D9C8A8"/><path d="M16 54 L60 22 L104 54Z" fill="#8A6A4F"/><circle cx="60" cy="76" r="16" fill="#fff"/><path d="M60 68v16M52 76h16" stroke="#1D2B33" stroke-width="4" stroke-linecap="round"/>'
+  };
+  var SHOPNAME={coffee:'Coffee cart',sbux:'Starbucks',tea:'Tea house',energy:'Energy kiosk',soda:'Sweet shop',custom:'Custom'};
+  function shopSvg(id){return '<svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="108" rx="40" ry="6" fill="#000" opacity=".1"/>'+SHOP[id]+'</svg>';}
+
+  /* ---------- state ---------- */
+  var KEY='caffeine-heart-v2';
+  function today(){return new Date().toISOString().slice(0,10);}
+  var S={log:[],pz:false,age:'adult',preg:false,bp:false,diab:false,rhythm:false,sleep:false,goal:'',cat:'coffee',ex:false};
+  function exampleLog(){
+    var d=new Date();var a=new Date(d.getFullYear(),d.getMonth(),d.getDate(),8,10).getTime();var b=new Date(d.getFullYear(),d.getMonth(),d.getDate(),10,40).getTime();
+    function mk(id,si,t){var x=D.filter(function(q){return q.id===id})[0];return {id:id,name:x.name,size:x.sizes[si][0],mg:x.sizes[si][1],kind:x.kind,color:x.color,t:t,ex:true};}
+    return [mk('brew',0,a),mk('matchal',2,b)];
+  }
+  function load(){
+    try{var r=JSON.parse(localStorage.getItem(KEY)||'null');if(r){for(var k in S)if(k in r&&k!=='log'&&k!=='ex')S[k]=r[k];
+      if(r.day===today()){S.log=r.log||[];S.ex=!!r.ex;}else{S.log=[];S.ex=false;} return;}}catch(e){}
+    S.log=exampleLog();S.ex=true;
+  }
+  function save(){try{var o={};for(var k in S)o[k]=S[k];o.day=today();localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+
+  function guidance(){
+    var gen='General adult guidance: up to about 400 mg a day (AHA statement, FDA)';
+    if(!S.pz)return {s:400,rows:[{v:400,t:gen,bind:true}]};
+    var goal=parseFloat(S.goal);
+    if(!isNaN(goal)&&S.goal!==''&&goal>=0)return {s:goal,rows:[{v:goal,t:'Your own goal',bind:true}],own:true};
+    var rows=[{v:400,t:gen}];
+    if(S.age==='senior')rows.push({v:400,t:'65 and over: the sources used here give no separate figure, so adult guidance applies'});
+    if(S.age==='teen')rows.push({v:100,t:'Ages 12 to 18: 100 mg a day (AACAP)'});
+    if(S.age==='child')rows.push({v:0,t:'Under 12: avoid caffeine, no known safe amount'});
+    if(S.preg)rows.push({v:200,t:'Pregnancy: under 200 mg a day (ACOG)'});
+    var s=Math.min.apply(null,rows.map(function(r){return r.v}));
+    var bound=false;rows.forEach(function(r){if(r.v===s&&!bound){r.bind=true;bound=true;}});
+    return {s:s,rows:rows};
+  }
+  function total(){return S.log.reduce(function(a,b){return a+b.mg},0);}
+  function stateOf(mg,s){var r=s>0?mg/s:(mg>0?2:0);return {r:r,name:r>1.25?'sick':r>=1?'buzz':r>=0.5?'perky':'calm'};}
+  var STATE={
+    calm:{pill:'Calm',dur:'1.3s'},perky:{pill:'Perky',dur:'1s'},buzz:{pill:'Buzzing',dur:'.6s'},sick:{pill:'Overloaded',dur:'.75s'}
+  };
+
+  /* ---------- render ---------- */
+  var $=function(i){return document.getElementById(i)};
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function fmtT(t){try{return new Date(t).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}catch(e){return ''}}
+  var tmpBubble=null,tmpTimer=0;
+  var SLOTS=[[214,312],[52,312],[246,318],[14,318],[286,312],[-26,312]];
+  function bubbleText(st,mg,g){
+    if(mg===0)return 'Hi! What are we sipping?';
+    if(st==='calm')return 'Easy does it!';
+    if(st==='perky')return 'Ooh, nicely perky!';
+    if(st==='buzz')return "Whoa, I'm buzzing!";
+    return g.s>0?"I don't feel so good…":'Not for me, please…';
+  }
+  function renderHero(){
+    var g=guidance(),mg=total(),st=stateOf(mg,g.s);
+    $('home').dataset.state=st.name;$('heart').dataset.state=st.name;
+    $('beat').style.setProperty('--dur',STATE[st.name].dur);
+    $('mgTotal').textContent=mg;$('mgTotal2').textContent=mg;
+    $('ofLine').textContent=g.s>0?('of '+g.s+' mg '+(g.own?'goal':'suggested')):'No caffeine suggested';
+    $('statePill').textContent=STATE[st.name].pill;
+    var pct=Math.max(st.r*100,0);$('barFill').style.width=Math.min(100,pct)+'%';$('bar').className='bar'+(st.r>1?' over':'');
+    $('sumv').textContent=g.s+' mg suggested'+(S.pz?' · personalized':'');
+    var b=$('bubble');b.textContent=tmpBubble||bubbleText(st.name,mg,g);
+    var last=S.log[S.log.length-1];
+    $('held').innerHTML=last?'<g class="pop">'+ico(last.kind,last.color)+'</g>':'';
+    var prev=S.log.slice(0,-1).reverse(),o='';
+    prev.slice(0,SLOTS.length).forEach(function(it,i){var p=SLOTS[i];o+='<g transform="translate('+p[0]+','+p[1]+') scale(.6)">'+ico(it.kind,it.color)+'</g>';});
+    if(prev.length>SLOTS.length)o+='<text x="300" y="352" font-family="Fredoka,sans-serif" font-size="18" font-weight="600" fill="#12303B">+'+(prev.length-SLOTS.length)+'</text>';
+    $('ground').innerHTML=o;
+    var why='<b>Suggested: '+g.s+' mg a day</b><ul>'+g.rows.map(function(r){return '<li'+(r.bind?' class="bind"':'')+'>'+esc(r.t)+'</li>'}).join('')+'</ul>';
+    if(!S.pz)why+='<p style="margin:8px 0 0">Not right for teens, pregnancy or some health conditions. Turn on personalization above.</p>';
+    $('why').innerHTML=why;
+  }
+  function renderLog(){
+    var h='';
+    if(S.ex&&S.log.some(function(x){return x.ex}))h+='<div class="banner"><span>An example day, so you can see how it works.</span><button class="soft" id="clearEx">Start my own</button></div>';
+    $('banner').innerHTML=h;
+    if(!S.log.length){$('log').innerHTML='<p class="empty">Nothing yet. Visit a shop and pick a drink.</p>';return;}
+    $('log').innerHTML=S.log.map(function(x,i){return '<div class="logrow"><span class="ico">'+svg(x.kind,x.color,32)+'</span><div><b>'+esc(x.name)+(x.ex?'<span class="tagex">example</span>':'')+'</b><small>'+esc(x.size)+' · '+fmtT(x.t)+'</small></div><b>'+x.mg+' mg</b><button class="x" data-rm="'+i+'" aria-label="Remove '+esc(x.name)+'">×</button></div>'}).join('');
+    var b=$('clearEx');if(b)b.onclick=function(){S.log=[];S.ex=false;save();renderAll();};
+  }
+  function renderTiles(){
+    $('tiles').innerHTML=CATS.map(function(c){return '<button class="tile" data-cat="'+c[0]+'" aria-pressed="'+(S.cat===c[0])+'">'+shopSvg(c[0])+'<span>'+SHOPNAME[c[0]]+'</span></button>'}).join('');
+    var c=CATS.filter(function(x){return x[0]===S.cat})[0];$('catHint').textContent=c[2];
+  }
+  function renderPick(){
+    if(S.cat==='custom'){
+      $('pick').style.maxHeight='none';
+      $('pick').innerHTML='<div class="cust"><label for="cn">Drink name<input id="cn" type="text" placeholder="e.g. Oat cortado" maxlength="40"></label><label for="cm">Caffeine in mg<input id="cm" type="number" min="1" max="2000" step="1" placeholder="e.g. 120"></label><button class="go" id="cadd" aria-label="Add custom drink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>';
+      return;
+    }
+    $('pick').style.maxHeight='';
+    $('pick').innerHTML=D.filter(function(d){return d.cat===S.cat}).map(function(d){
+      var i0=d.cat==='sbux'&&d.sizes.length>2?2:0;
+      var sel=d.sizes.length>1?'<select id="sz-'+d.id+'" data-sz="'+d.id+'" aria-label="Size for '+esc(d.name)+'">'+d.sizes.map(function(s,i){return '<option value="'+i+'"'+(i===i0?' selected':'')+'>'+s[0]+'</option>'}).join('')+'</select>':'<span style="font-size:13px;color:var(--muted);font-weight:700">'+d.sizes[0][0]+'</span>';
+      return '<div class="drink"><span class="ico">'+svg(d.kind,d.color,34)+'</span><div class="dn"><b>'+esc(d.name)+'</b>'+(d.note?'<span>'+esc(d.note)+'</span>':'')+'</div>'+sel+'<output class="mg" id="mg-'+d.id+'">'+d.sizes[i0][1]+' mg</output><button class="go" data-add="'+d.id+'" aria-label="Add '+esc(d.name)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>';
+    }).join('');
+  }
+  function renderNotes(){
+    var g=guidance(),mg=total(),n=[];
+    function P(t,w){n.push({t:t,w:w})}
+    var en=S.log.some(function(x){return D.some(function(d){return d.id===x.id&&d.energy})});
+    if(mg>g.s&&g.s>0)P('You are '+(mg-g.s)+' mg over your suggested amount. Caffeine from coffee usually peaks in your blood in about an hour, and responses vary from person to person.',true);
+    else if(mg>0&&g.s===0)P('Caffeine is not recommended for children under 12.',true);
+    else P('Caffeine from coffee usually peaks in your blood in about an hour. Responses vary with genes, age and tolerance.');
+    if(en)P('Energy drinks: the AHA statement says data are limited and generally point to cardiovascular harm. They raised blood pressure in healthy adults.',true);
+    if(S.log.some(function(x){return D.some(function(d){return d.id===x.id&&d.unfiltered})}))P('Unfiltered coffee (French press, Turkish, boiled, espresso) contains cafestol, which raises LDL cholesterol. Paper-filtered and instant coffee do not.');
+    if(S.pz){
+      if(S.age==='teen')P('Teens 12 to 18: AACAP recommends 100 mg a day or less.');
+      if(S.age==='child')P('Children under 12 should avoid caffeine.',true);
+      if(S.preg)P('Pregnancy: ACOG recommends staying under 200 mg a day. Caffeine crosses the placenta.');
+      if(S.bp)P('High blood pressure: the AHA says high caffeine doses can raise blood pressure significantly, especially with hypertension. Ask your doctor what suits you.');
+      if(S.diab){var sg=S.log.filter(function(x){return D.some(function(d){return d.id===x.id&&d.sugary})}).length;
+        P('Diabetes: regular coffee drinkers had about 20% lower type 2 diabetes risk at roughly 3.5 cups a day, and decaf showed similar benefit. Added sugar and syrups can offset that.'+(sg?' You logged '+sg+' sweetened '+(sg>1?'drinks':'drink')+' today.':''),sg>0);}
+      if(S.rhythm)P('Heart rhythm: in a randomized trial of people treated for AF, continuing coffee lowered the chance AF came back. Coffee may add extra beats from the lower chambers (PVCs), and very high caffeine doses have been linked to rhythm problems, even in healthy adults under 30.',en);
+      if(S.sleep){var late=S.log.some(function(x){return new Date(x.t).getHours()>=14});
+        P(late?'You had caffeine in the afternoon. Caffeine can get in the way of sleep, so consider stopping earlier in the day.':'For sleep: caffeine can keep you awake, so it helps to cut caffeinated drinks late in the day.',late);}
+    } else if(mg>0){P('Showing general adult guidance. If you are pregnant, under 18, or have a heart or blood pressure condition, turn on personalization.');}
+    n=n.filter(function(x){return x.w}).concat(n.filter(function(x){return !x.w}));
+    function li(x){return '<li'+(x.w?' class="warn"':'')+'>'+esc(x.t)+'</li>'}
+    $('notes').innerHTML=n.slice(0,2).map(li).join('');
+    var rest=n.slice(2);$('moreNotes').hidden=!rest.length;
+    $('notes2').innerHTML=rest.map(li).join('');
+    $('moreSum').textContent='See '+rest.length+' more';
+  }
+  function renderPz(){
+    $('pz').checked=S.pz;$('pzBox').setAttribute('aria-disabled',String(!S.pz));
+    ['age','goal'].forEach(function(k){$(k).disabled=!S.pz;$(k).value=S[k];});
+    [['c-preg','preg'],['c-bp','bp'],['c-diab','diab'],['c-rhythm','rhythm'],['c-sleep','sleep']].forEach(function(p){$(p[0]).disabled=!S.pz;$(p[0]).checked=S[p[1]];});
+  }
+  function renderAll(){renderHero();renderLog();renderNotes();}
+
+  var FACTS=[
+    ['Caffeine is not the whole story','You might expect caffeine to be what matters. But decaf coffee, which has almost no caffeine, was linked to a similar lower risk of type 2 diabetes. In the AHA review, regular coffee drinkers had about 20% lower risk at around 3.5 cups a day and about 30% lower at around 5 cups. Because decaf worked too, other natural compounds in coffee are probably doing part of the job. This comes from observational studies, so it shows a link, not proof.'],
+    ['How you brew matters','French press, Turkish, boiled coffee and espresso can raise LDL cholesterol. Paper filters catch the cause, cafestol.'],
+    ['Energy drinks are different','They raised blood pressure more than coffee, and very high doses have been linked to rhythm problems, even in healthy adults under 30.'],
+    ['The sweet spot is moderate','Heart disease and stroke risk looked lowest at about 2 to 4 cups a day. Stroke risk was about 21% lower at 3 to 4 cups. Most of this evidence is observational.'],
+    ['One hour to peak','Caffeine from coffee usually peaks in your blood in about an hour. How fast you clear it varies with genes, age and tolerance.'],
+    ['Your genes set your speed','Variants in genes like CYP1A2 change how you process caffeine, so some people feel small amounts for longer.'],
+    ['Good news for rhythm, with a catch','In people treated for AF, continuing coffee cut the risk of AF coming back by 39% in a randomized trial. Randomized trials also suggest coffee can add extra heartbeats (PVCs).'],
+    ['Extreme doses are risky','Rare cases of dangerous heart rhythms and cardiac arrest have been reported after extremely high caffeine intake.'],
+    ['Sugar changes the picture','The AHA calls up to 400 mg a day safe for most adults when the coffee has no added sugar or fillers.']
+  ];
+  $('facts').innerHTML=FACTS.map(function(f){return '<details class="fact"><summary>'+f[0]+'</summary><p>'+f[1]+'</p></details>'}).join('');
+
+  /* ---------- events ---------- */
+  function react(name){
+    tmpBubble='Mmm, '+name.split(' (')[0].toLowerCase().slice(0,26)+'!';
+    clearTimeout(tmpTimer);tmpTimer=setTimeout(function(){tmpBubble=null;renderHero();},2400);
+    var b=$('bubble');b.classList.remove('hop');void b.offsetWidth;b.classList.add('hop');
+  }
+  function reduced(){try{return window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
+  function go(id){var el=$(id);if(el)el.scrollIntoView({behavior:reduced()?'auto':'smooth',block:id==='home'?'start':'start'});}
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('button');if(!t)return;
+    if(t.dataset.go){go(t.dataset.go);return;}
+    if(t.dataset.cat){S.cat=t.dataset.cat;save();renderTiles();renderPick();return;}
+    if(t.dataset.add){
+      var d=D.filter(function(x){return x.id===t.dataset.add})[0];var sel=$('sz-'+d.id);var i=sel?parseInt(sel.value,10):0;
+      if(S.log.some(function(x){return x.ex}))S.log=[];S.ex=false;
+      S.log.push({id:d.id,name:d.name,size:d.sizes[i][0],mg:d.sizes[i][1],kind:d.kind,color:d.color,t:Date.now()});
+      react(d.name);save();renderAll();go('home');return;}
+    if(t.id==='cadd'){var mg=parseFloat($('cm').value);if(!(mg>0&&mg<=2000)){$('cm').focus();return;}
+      var nm=($('cn').value||'Custom drink').trim()||'Custom drink';
+      if(S.log.some(function(x){return x.ex}))S.log=[];S.ex=false;
+      S.log.push({id:'custom',name:nm,size:'Custom',mg:Math.round(mg),kind:'cup',color:'#B07A4A',t:Date.now()});
+      $('cn').value='';$('cm').value='';react(nm);save();renderAll();go('home');return;}
+    if(t.dataset.rm!==undefined){S.log.splice(parseInt(t.dataset.rm,10),1);if(!S.log.length)S.ex=false;save();renderAll();return;}
+    if(t.id==='clear'){S.log=[];S.ex=false;save();renderAll();}
+  });
+  document.addEventListener('change',function(e){
+    var t=e.target;
+    if(t.dataset&&t.dataset.sz){var d=D.filter(function(x){return x.id===t.dataset.sz})[0];$('mg-'+d.id).textContent=d.sizes[parseInt(t.value,10)][1]+' mg';return;}
+    if(t.id==='pz'){S.pz=t.checked;if(S.pz)$('gd').open=true;}
+    else if(t.id==='age'){S.age=t.value;}
+    else if(t.id==='goal'){S.goal=t.value;}
+    else if(t.id.indexOf('c-')===0){S[t.id.slice(2)]=t.checked;}
+    else return;
+    save();renderPz();renderAll();
+  });
+  $('goal').addEventListener('input',function(){S.goal=this.value;save();renderAll();});
+
+  /* dock highlight */
+  var IDS=['home','street','journal','office','library'];
+  function onScroll(){
+    var y=window.innerHeight*0.45,cur='home';
+    IDS.forEach(function(id){var r=$(id).getBoundingClientRect();if(r.top<=y)cur=id;});
+    document.querySelectorAll('.dk').forEach(function(b){b.setAttribute('aria-current',String(b.dataset.go===cur));});
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+
+  load();renderTiles();renderPick();renderPz();renderAll();onScroll();
+})();
+</script>
+
+</html>
